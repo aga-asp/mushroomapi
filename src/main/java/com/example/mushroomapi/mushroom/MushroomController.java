@@ -1,10 +1,10 @@
 package com.example.mushroomapi.mushroom;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/shroom")
@@ -19,24 +19,51 @@ public class MushroomController {
         this.mushroomRepository = mushroomRepository;
     }
 
-    @GetMapping
-    public List<Mushroom> getMushrooms() {
-        return mushroomService.getMushrooms();
+
+    @GetMapping(path = "{mushroomId}")
+    public Mushroom getMushroom(@PathVariable("mushroomId") Long mushroomId) {
+        return mushroomService.getRecordById(mushroomId);
     }
 
     @PostMapping
     public void postMushroom(@RequestBody Mushroom mushroom) {
-        mushroomService.postMushroom(mushroom);
+        mushroomService.postRecord(mushroom);
     }
 
     @DeleteMapping(path = "{mushroomId}")
     public void deleteMushroom(@PathVariable("mushroomId") Long mushroomId) {
-        mushroomService.deleteMushroom(mushroomId);
+        mushroomService.deleteRecordById(mushroomId);
     }
 
-    @PutMapping(path ="{mushroomId}")
+    @PutMapping(path = "{mushroomId}")
     public void updateMushroom(@PathVariable("mushroomId") Long mushroomId,
                                @RequestParam(required = false) String name) {
-        mushroomService.putMushroom(mushroomId, name);
+        mushroomService.updateRecordById(mushroomId, name);
     }
+
+    @GetMapping("/all")
+    public List<Mushroom> getMushrooms() {
+        return mushroomService.getAllRecordsFromDataBase();
+    }
+
+    @PostMapping("/all")
+    public void postMushrooms(@RequestBody List<Mushroom> mushroomList) {
+        mushroomService.postRecords(mushroomList);
+    }
+
+    @DeleteMapping("/all")
+    public void deleteAllMushrooms() {
+        mushroomService.deleteAllRecordsFromDatabase();
+    }
+//    @PutMapping("/all")
+//    public void updateAllMushroom(){
+//        mushroomService.updateMushrooms();
+//    }
+
+    @PostMapping("/forcePostMushrooms")
+    @ResponseStatus(HttpStatus.PARTIAL_CONTENT)
+    public void forcePostMushrooms(@RequestBody List<Mushroom> mushroomList) {
+        mushroomService.forcePostRecords(mushroomList);
+    }
+
 }
