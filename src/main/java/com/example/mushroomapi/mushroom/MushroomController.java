@@ -1,9 +1,12 @@
 package com.example.mushroomapi.mushroom;
 
+import com.example.mushroomapi.weather.AccuWeatherApiClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.List;
 
 @RestController
@@ -12,11 +15,14 @@ public class MushroomController {
     private final MushroomService mushroomService;
     private final MushroomRepository mushroomRepository;
 
+    private final AccuWeatherApiClient accuWeatherApiClient;
+
     @Autowired
     public MushroomController(MushroomService mushroomService,
-                              MushroomRepository mushroomRepository) {
+                              MushroomRepository mushroomRepository, AccuWeatherApiClient accuWeatherApiClient) {
         this.mushroomService = mushroomService;
         this.mushroomRepository = mushroomRepository;
+        this.accuWeatherApiClient = accuWeatherApiClient;
     }
 
 
@@ -64,6 +70,11 @@ public class MushroomController {
     @ResponseStatus(HttpStatus.PARTIAL_CONTENT)
     public void forcePostMushrooms(@RequestBody List<Mushroom> mushroomList) {
         mushroomService.forcePostRecords(mushroomList);
+    }
+
+    @GetMapping("weather")
+    public void getWeather() throws URISyntaxException, IOException, InterruptedException {
+        accuWeatherApiClient.getLocationDto("Kraków");
     }
 
 }
